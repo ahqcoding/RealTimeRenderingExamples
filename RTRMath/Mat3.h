@@ -9,6 +9,9 @@ namespace RTR {
 	{
 	public:
 		Vector3f rows[3];
+		Mat3() {
+
+		}
 
 		Mat3(const Mat3& m)
 		{

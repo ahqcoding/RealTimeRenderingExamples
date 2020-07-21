@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <cmath>
+#include <iostream>
 namespace RTR {
 	template<typename T>
 	class Vector4 {
@@ -61,7 +62,13 @@ namespace RTR {
 
 		}
 
+		T dot(const Vector4& v) {
+			return x * v.x + y * v.y + z * v.z + w * v.w;
+		}
+
+
 	};
 
 	typedef Vector4<float> Vector4f;
+
 }
