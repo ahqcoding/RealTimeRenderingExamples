@@ -25,6 +25,12 @@ namespace RTR {
 			return rows[i];
 		}
 
+
+		const Vector3f& operator[](const size_t i) const {
+			assert(i >= 0 && i < 3);
+			return rows[i];
+		}
+
 		Vector3f operator*(const Vector3f& v) {
 			float x = rows[0].dot(v);
 			float y = rows[1].dot(v);

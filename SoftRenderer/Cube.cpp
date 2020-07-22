@@ -37,15 +37,15 @@ namespace RTR {
         for (std::size_t i = 0; i < vertices.size() / 3 - 2; i += 3) {
 
             Vertex triangle[3];
-            Vector4f points[3];
+           
             for (int j = 0; j < 3; j++) {
                 unsigned int ind = indices[i + j];
-                triangle[j].position = Vector3f(ind * 3, ind * 3 + 1, ind * 3 + 2);
-                points[j] = app->getShader()->vertex(triangle[j], j);
+                triangle[j].position = Vector4f(vertices[ind * 3], vertices[ind * 3 + 1], vertices[ind * 3 + 2], 1.0f);
+                app->getShader()->vertex(triangle[j], j);
                
             }
 
-            app->getRaster()->rasterizeTriangle(points);
+            app->getRaster()->rasterizeTriangle(app->getShader()->vertexs);
         }
     }
 }

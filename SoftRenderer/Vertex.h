@@ -4,7 +4,7 @@
 namespace RTR {
 	struct  Vertex
 	{
-		Vector3f position;
+		Vector4f position;
 		Vector3f normal;
 		Vector2f uv;
 

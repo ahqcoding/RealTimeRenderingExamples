@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <cmath>
 #include <iostream>
+#include "Vector3.h"
 namespace RTR {
 	template<typename T>
 	class Vector4 {
@@ -30,7 +31,21 @@ namespace RTR {
 
 		}
 
+		Vector4(const Vector3<T>& v, T _w)
+			: x(v.x)
+			, y(v.y)
+			, z(v.z)
+			, w(_w)
+		{
+
+		}
+
 		T& operator[](size_t i) {
+			assert(i >= 0 && i <= 3);
+			return i == 0 ? x : i == 1 ? y : i == 2 ? z : w;
+		}
+
+		const T& operator[](size_t i) const {
 			assert(i >= 0 && i <= 3);
 			return i == 0 ? x : i == 1 ? y : i == 2 ? z : w;
 		}

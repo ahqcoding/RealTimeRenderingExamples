@@ -1,24 +1,23 @@
 #include "Rasterizer.h"
 #include "Application.h"
 #include <algorithm>
+#include "Vertex.h"
 namespace RTR {
-	void Rasterizer::rasterizeTriangle(Vector4f* vertices)
+	void Rasterizer::rasterizeTriangle(Vertex* vetexs)
 	{
-		Mat4 viewport = Mat4::viewport(app->getWidth(), app->getHeight());
+		
 		for (int n = 0; n < 3; n++) {
-			vertices[n].x /= vertices[n].w;
-			vertices[n].y /= vertices[n].w;
-			vertices[n].z /= vertices[n].w;
-			vertices[n].x = (vertices[n].x + 1) / 2 * app->getWidth();
-			vertices[n].y = (1 - vertices[n].y) / 2 * app->getHeight();
+			vetexs[n].position.x /= vetexs[n].position.w;
+			vetexs[n].position.y /= vetexs[n].position.w;
+			vetexs[n].position.z /= vetexs[n].position.w;
+			vetexs[n].position.x = (vetexs[n].position.x + 1) / 2 * app->getWidth();
+			vetexs[n].position.y = (1 - vetexs[n].position.y) / 2 * app->getHeight();
 			
 		}
-
+		Vector3f v1 = Vector3f(vetexs[0].position.x, vetexs[0].position.y, vetexs[0].position.z);
+		Vector3f v2 = Vector3f(vetexs[1].position.x, vetexs[1].position.y, vetexs[1].position.z);
+		Vector3f v3 = Vector3f(vetexs[2].position.x, vetexs[2].position.y, vetexs[2].position.z);
 		
-
-		Vector3f v1 = Vector3f(vertices[0].x, vertices[0].y, vertices[0].z);
-		Vector3f v2 = Vector3f(vertices[1].x, vertices[1].y, vertices[1].z);
-		Vector3f v3 = Vector3f(vertices[2].x, vertices[2].y, vertices[2].z);
 		Vector3f faceNormal = (v2 - v1).cross(v3 - v1);
 		if (faceNormal.z > 0) {
 			return;
@@ -29,7 +28,7 @@ namespace RTR {
 		Vector2f clamp(app->getWidth() - 1, app->getHeight() - 1);
 		Vector2f triangles[3];
 		for (int i = 0; i < 3; i++) {
-			triangles[i] = Vector2f(vertices[i].x, vertices[i].y);
+			triangles[i] = Vector2f(vetexs[i].position.x, vetexs[i].position.y);
 		}
 		for (int i = 0; i < 3; i++) {
 			bboxmin.x = std::max(0.f, std::min(bboxmin.x, triangles[i].x));
@@ -39,17 +38,21 @@ namespace RTR {
 		}
 
 		Vector2i p;
+		Vector3f bc_clip;
+		Vector3f bc_screen;
+		Vector4f color;
+		float z;
 		for (p.x = bboxmin.x; p.x <= bboxmax.x; p.x++) {
 			for (p.y = bboxmin.y; p.y <= bboxmax.y; p.y++) {
-				Vector3f bc_screen = barycentric(triangles, Vector2f(p.x, p.y));
+				bc_screen = this->barycentric(triangles, Vector2f(p.x, p.y));
 				if (bc_screen.x < 0 || bc_screen.x > 1 || bc_screen.y < 0 || bc_screen.y > 1
 					|| bc_screen.z < 0 || bc_screen.z > 1) continue;
-				float z = 0;
-				Vector3f bc_clip = Vector3f(bc_screen.x / vertices[0].w, bc_screen.y / vertices[1].w, bc_screen.z / vertices[2].w);
+				z = 0;
+				bc_clip = Vector3f(bc_screen.x / vetexs[0].position.w, bc_screen.y / vetexs[1].position.w, bc_screen.z / vetexs[2].position.w);
 				bc_clip = bc_clip / (bc_clip.x + bc_clip.y + bc_clip.z);
-				Vector4f color = app->getShader()->fragment(bc_clip);
+				color = app->getShader()->fragment(bc_clip);
 				
-				for (int i = 0; i < 3; i++)  z += vertices[i][2] * bc_clip[i];
+				for (int i = 0; i < 3; i++)  z += vetexs[i].position.z * bc_clip[i];
 				if (app->getWindow()->getFrameBuffer()->getDepth(p.x, p.y) > z) {
 					app->getWindow()->getFrameBuffer()->setDepth(p.x, p.y, z);
 					app->getWindow()->getFrameBuffer()->setColor(p.x, p.y, color[3] * 255, color[2] * 255, color[1] * 255, color[0] * 255);

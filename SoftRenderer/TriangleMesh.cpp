@@ -24,16 +24,16 @@ namespace RTR {
 			
 			
 			Vertex triangle[3];
-			Vector4f points[3];
+			
 			for (int j = 0; j < 3; j++) {
 				unsigned int ind = indices[i + j];
-				triangle[j].position = Vector3f(vertices[ind * 3], 
+				triangle[j].position = Vector4f(vertices[ind * 3], 
 					vertices[ind * 3 + 1], 
-					vertices[ind * 3 + 2]);
-				points[j] = app->getShader()->vertex(triangle[j], j);
+					vertices[ind * 3 + 2], 1.0f);
+				app->getShader()->vertex(triangle[j], j);
 			}
 			
-			app->getRaster()->rasterizeTriangle(points);
+			app->getRaster()->rasterizeTriangle(app->getShader()->vertexs);
 		}
 	}
 

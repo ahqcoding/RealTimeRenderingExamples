@@ -8,7 +8,6 @@
 namespace RTR {
 	class Mat4 {
 	public:
-
 		Mat4() {
 			initIdentity();
 		}
@@ -31,7 +30,12 @@ namespace RTR {
 			return rows[i];
 		}
 
-		Mat4 operator*(Mat4 m) {
+		const Vector4f& operator[](const size_t i) const {
+			assert(i >= 0 && i < 4);
+			return rows[i];
+		}
+
+		Mat4 operator*(const Mat4& m) {
 			Mat4 ret;
 			
 			for (int i = 0; i < 4; i++) {
@@ -46,7 +50,7 @@ namespace RTR {
 			return ret;
 		}
 
-		Vector4f operator*(Vector4f v) {
+		Vector4f operator*(const Vector4f& v) {
 			float x = rows[0].dot(v);
 			float y = rows[1].dot(v);
 			float z = rows[2].dot(v);
@@ -66,7 +70,7 @@ namespace RTR {
 			return ret;
 		}
 
-		static Mat4 Translation(Vector3f v) {
+		static Mat4 Translation(Vector3f& v) {
 			Mat4 ret;
 			ret[0][3] = v.x;
 			ret[1][3] = v.y;
@@ -101,7 +105,7 @@ namespace RTR {
 			return ret;
 		}
 
-		static Mat4 Rotation(Vector3f axis, float angle)
+		static Mat4 Rotation(Vector3f& axis, float angle)
 		{
 			float radians = angle * RTR_PI / 180;
 			Mat4 ret;
@@ -115,7 +119,7 @@ namespace RTR {
 				0.0, 0.0, 0.0, 1.0);
 		}
 
-		static Mat4 Scale(Vector3f scale)
+		static Mat4 Scale(Vector3f& scale)
 		{
 			Mat4 ret;
 			ret[0][0] = scale[0];

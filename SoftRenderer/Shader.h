@@ -15,20 +15,19 @@ namespace RTR {
 		Vertex vertexs[3];
 		std::map<std::string, Texture*> textures;
 		
-		virtual Vector4f vertex(Vertex& vertex, int index) = 0;
+		virtual void vertex(Vertex& vertex, int index) = 0;
 		virtual Vector4f fragment(Vector3f& bar) = 0;
 	};
 
 	class BlinnPhongShader : public Shader {
 	public:
-		virtual Vector4f vertex(Vertex& vertex, int index) override {
+		virtual void vertex(Vertex& vertex, int index) override {
 			vertexs[index].normal = normalMatrix * vertex.normal;
 			vertexs[index].uv = vertex.uv;
 			Vector4f tempPos = modelViewMatrix * Vector4f(vertex.position[0],
 				vertex.position[1], vertex.position[2], 1.0f);
 			vertexs[index].viewPos = Vector3f(tempPos[0], tempPos[1], tempPos[2]);
-			
-			return mvp * Vector4f(vertex.position[0], vertex.position[1], vertex.position[2], 1.0);
+			vertexs[index].position =  mvp * Vector4f(vertex.position[0], vertex.position[1], vertex.position[2], 1.0);
 		}
 
 		virtual Vector4f fragment(Vector3f& bar) {

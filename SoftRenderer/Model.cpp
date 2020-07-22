@@ -47,15 +47,14 @@ void RTR::Model::load(const std::string& filename)
 void RTR::Model::draw()
 {
     Vertex triangle[3];
-    Vector4f points[3];
     app->getShader()->textures.insert(std::make_pair("diffuse", &diffuseTexture));
     for (std::size_t f = 0; f < faces.size(); f++) {
         for (std::size_t n = 0; n < 3; n++) {
-            triangle[n].position = vert(f, n);
+            triangle[n].position = Vector4f(vert(f, n), 1.0f);
             triangle[n].uv = texCoord(f, n);
             triangle[n].normal = normal(f, n);
-            points[n] = app->getShader()->vertex(triangle[n], n);
+            app->getShader()->vertex(triangle[n], n);
         }
-        app->getRaster()->rasterizeTriangle(points);
+        app->getRaster()->rasterizeTriangle(app->getShader()->vertexs);
     }
 }

@@ -10,11 +10,9 @@
 namespace RTR {
     Application::Application(int w, int h) : 
         mWidth(w), mHeight(h),
-        mCamera(Vector3f(0.0, 0.0, 1.0), Vector3f(0.0, 0.0, 0.0), Vector3f(0.0, 1.0, 0.0))
+        mCamera(Vector3f(0.0, 0.0, 2.0), Vector3f(0.0, 0.0, 0.0), Vector3f(0.0, 1.0, 0.0))
     {
-
         init();
-
     }
 
     Application::~Application() {
@@ -34,9 +32,7 @@ namespace RTR {
         model.load("Assets/african_head/african_head");
         model.setApplication(this);
         Mat4 viewMatrix = mCamera.getMat4();
-    
         Mat4 projMatrix = Mat4::Perspective(90.0f, (float)mWidth / (float)mHeight, 0.1f, 100.f);
-      
         Mat4 modelMatrix;
         
         mShader->mvp = projMatrix * viewMatrix * modelMatrix;
